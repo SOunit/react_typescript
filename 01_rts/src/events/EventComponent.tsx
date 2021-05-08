@@ -1,15 +1,21 @@
+import React from 'react';
+
 const EventComponent: React.FC = () => {
-  // get type from function in jsx
+  // event type from onChange mouseover definition
   const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    console.log(event);
+  };
+
+  const onDragStart = (event: React.DragEvent<HTMLDivElement>) => {
     console.log(event);
   };
 
   return (
     <div>
-      {/* this line has type inference */}
-      <input onChange={(e) => console.log(e)} />
-      {/* this line has NO type inference */}
       <input onChange={onChange} />
+      <div draggable onDragStart={onDragStart}>
+        Drag Me!
+      </div>
     </div>
   );
 };
