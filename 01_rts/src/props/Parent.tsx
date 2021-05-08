@@ -1,7 +1,24 @@
-import { Child } from './Child';
+import { Child, ChildAsFC } from './Child';
 
 const Parent = () => {
-  return <Child color='red' />;
+  return (
+    <div>
+      <Child
+        color='red'
+        onClick={() => {
+          console.log('click');
+        }}
+      />
+      <ChildAsFC
+        color='red'
+        onClick={() => {
+          console.log('click');
+        }}
+      >
+        FunctionComponent includes children prop
+      </ChildAsFC>
+    </div>
+  );
 };
 
 export default Parent;
