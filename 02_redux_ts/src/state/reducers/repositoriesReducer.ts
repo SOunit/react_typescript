@@ -1,12 +1,30 @@
-import { string } from 'yargs';
-
 interface RepositoriesState {
   loading: boolean;
   error: string | null;
   data: string[];
 }
 
-const reducer = (state: RepositoriesState, action: any): RepositoriesState => {
+interface SearchRepositoriesAction {
+  type: 'search_repositories';
+}
+
+interface SearchRepositoriesSuccessAction {
+  type: 'search_repositories_success';
+  payload: string[];
+}
+
+interface SearchRepositoriesErrorAction {
+  type: 'search_repositories_error';
+  payload: string;
+}
+
+const reducer = (
+  state: RepositoriesState,
+  action:
+    | SearchRepositoriesAction
+    | SearchRepositoriesSuccessAction
+    | SearchRepositoriesErrorAction
+): RepositoriesState => {
   switch (action.type) {
     case 'search_repositories':
       // new search request reset state
