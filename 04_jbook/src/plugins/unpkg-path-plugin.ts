@@ -1,5 +1,10 @@
 import * as esbuild from 'esbuild-wasm';
 import axios from 'axios';
+import localForage from 'localforage';
+
+const fileCache = localForage.createInstance({
+  name: 'filecache',
+});
 
 export const unpkgPathPlugin = () => {
   return {
@@ -25,13 +30,6 @@ export const unpkgPathPlugin = () => {
           namespace: 'a',
           path: `https://unpkg.com/${args.path}`,
         };
-
-        // else if (args.path === 'tiny-test-pkg') {
-        //   return {
-        //     path: 'https://unpkg.com/tiny-test-pkg@1.0.0/index.js',
-        //     namespace: 'a',
-        //   };
-        // }
       });
 
       build.onLoad({ filter: /.*/ }, async (args: any) => {
@@ -48,13 +46,25 @@ export const unpkgPathPlugin = () => {
           };
         }
 
+        // check cach
+        const cachedResult = await fileCache.getItem<esbuild.OnLoadResult>(
+          args.path
+        );
+
+        // if exists
+        if (cachedResult) {
+          return cachedResult;
+        }
+
+        // if NOT exists
         const { data, request } = await axios.get(args.path);
-        console.log(request);
-        return {
+        const result: esbuild.OnLoadResult = {
           loader: 'jsx',
           contents: data,
           resolveDir: new URL('./', request.responseURL).pathname,
         };
+        await fileCache.setItem(args.path, result);
+        return result;
       });
     },
   };
